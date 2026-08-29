@@ -49,6 +49,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0, // reviews ki total count, jaise 124
     },
+      bestSeller: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }, // createdAt aur updatedAt khud add ho jayenge
 );
