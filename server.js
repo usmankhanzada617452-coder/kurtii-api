@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const subscriberRoutes = require("./routes/subscriberRoutes");
 
 connectDB();
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 app.use("/api/products", productRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/subscribe", subscriberRoutes);
 
 const PORT = process.env.PORT || 5000;
 if (process.env.VERCEL !== "1") {
