@@ -4,9 +4,9 @@ const Order = require("../models/Order");
 // POST /api/orders
 const createOrder = async (req, res) => {
   try {
-    const { fullName, phone, address, city, items, totalAmount } = req.body;
+    const { fullName, email, phone, address, city, items, totalAmount } = req.body;
 
-    if (!fullName || !phone || !address || !city || !items || !totalAmount) {
+    if (!fullName ||!email || !phone || !address || !city || !items || !totalAmount) {
       return res.status(400).json({
         success: false,
         message: "Sare fields zaroori hain",
@@ -15,6 +15,7 @@ const createOrder = async (req, res) => {
 
     const order = await Order.create({
       fullName,
+      email,
       phone,
       address,
       city,
