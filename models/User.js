@@ -10,12 +10,12 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true, // ek email sirf ek dafa register ho sakti hai
+      unique: true,
       lowercase: true,
     },
     password: {
       type: String,
-      required: true, // ye hamesha hashed (encrypted) store hoga
+      required: true,
     },
     phone: {
       type: String,
@@ -23,23 +23,19 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"], // sirf inhi 2 values allowed hain
+      enum: ["user", "admin"],
       default: "user",
     },
   },
   { timestamps: true }
 );
 
-// Save hone se pehle password ko automatically hash kar do
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next(); // agar password change nahi hua to skip karo
-
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
-// Login ke waqt password check karne ke liye helper function
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
