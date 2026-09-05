@@ -1,12 +1,10 @@
 const Order = require("../models/Order");
 
-// Naya order banao
-// POST /api/orders
 const createOrder = async (req, res) => {
   try {
-    const { fullName, email, phone, address, city, items, totalAmount } = req.body;
+    const { fullName, phone, email, address, city, items, totalAmount } = req.body;
 
-    if (!fullName ||!email || !phone || !address || !city || !items || !totalAmount) {
+    if (!fullName || !phone || !email || !address || !city || !items || !totalAmount) {
       return res.status(400).json({
         success: false,
         message: "Sare fields zaroori hain",
@@ -15,8 +13,8 @@ const createOrder = async (req, res) => {
 
     const order = await Order.create({
       fullName,
-      email,
       phone,
+      email,
       address,
       city,
       items,
@@ -36,8 +34,6 @@ const createOrder = async (req, res) => {
   }
 };
 
-// Sare orders laao (Atlas se admin dekhega)
-// GET /api/orders
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -53,4 +49,59 @@ const getOrders = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getOrders };
+// Naya function - email se orders dhoondo
+const getMyOrders = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email zaroori hai",
+      });
+    }
+
+    const orders = await Order.find({ email }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Status updated",
+      data: order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { createOrder, getOrders, getMyOrders, updateOrderStatus };
