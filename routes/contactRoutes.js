@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { sendMessage } = require("../controllers/contactController");
+const { sendMessage, getAllMessages } = require("../controllers/contactController");
 const { protect, adminOnly } = require("../middleware/auth");
 
 router.post("/", sendMessage);
