@@ -35,4 +35,12 @@ const subscribeEmail = async (req, res) => {
   }
 };
 
-module.exports = { subscribeEmail };
+const getAllSubscribers = async (req, res) => {
+  try {
+    const subscribers = await Subscriber.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: subscribers });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+module.exports = { subscribeEmail, getAllSubscribers };
