@@ -20,7 +20,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Check karo email pehle se registered to nahi
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({
@@ -29,7 +28,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // User banao (password automatically hash ho jayega Model ke andar)
     const user = await User.create({ name, email, password, phone });
 
     const token = generateToken(user._id);
@@ -68,7 +66,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // User dhoondo
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
@@ -77,7 +74,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Password check karo
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({
@@ -109,4 +105,29 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// Current logged-in user ka data laao
+// GET /api/auth/me
+const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { registerUser, loginUser, getMe };
