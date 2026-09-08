@@ -7,6 +7,7 @@ const subscriberSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
+      trim: true,
     },
   },
   { timestamps: true }

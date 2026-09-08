@@ -1,4 +1,6 @@
 const Product = require("../models/Product");
+const CATEGORIES = require("../config/categories");
+const validCategoryNames = CATEGORIES.map((c) => c.name);
 
 // Sare products laao
 // GET /api/products
@@ -46,6 +48,13 @@ const getProductById = async (req, res) => {
 // POST /api/products
 const createProduct = async (req, res) => {
   try {
+    if (!validCategoryNames.includes(req.body.category)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid category. Allowed: ${validCategoryNames.join(", ")}`,
+      });
+    }
+
     const product = await Product.create(req.body);
     res.status(201).json({
       success: true,
@@ -64,6 +73,13 @@ const createProduct = async (req, res) => {
 // PUT /api/products/:id
 const updateProduct = async (req, res) => {
   try {
+    if (req.body.category && !validCategoryNames.includes(req.body.category)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid category. Allowed: ${validCategoryNames.join(", ")}`,
+      });
+    }
+
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true, // updated wala data wapas bhejo
       runValidators: true,

@@ -1,10 +1,9 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-// Token banane ka helper function
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "7d", // token 7 din tak valid rahega
+    expiresIn: "7d", 
   });
 };
 

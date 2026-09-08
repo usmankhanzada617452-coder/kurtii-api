@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
-let isConnected = false;
-
 const connectDB = async () => {
-  if (isConnected) {
+  // 1 means connected, 2 means connecting
+  if (mongoose.connection.readyState >= 1) {
     return;
   }
 
@@ -12,11 +11,9 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 15000,
       socketTimeoutMS: 45000,
     });
-    isConnected = conn.connections[0].readyState === 1;
     console.log(`MongoDB Atlas connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`MongoDB connection error: ${error.message}`);
-    isConnected = false;
   }
 };
 

@@ -1,13 +1,15 @@
 const Order = require("../models/Order");
 
+// POST /api/orders
 const createOrder = async (req, res) => {
   try {
     const { fullName, phone, email, address, city, items, totalAmount } = req.body;
 
-    if (!fullName || !phone || !email || !address || !city || !items || !totalAmount) {
+    // Fix: Array length check for items
+    if (!fullName || !phone || !email || !address || !city || !items || !Array.isArray(items) || items.length === 0 || !totalAmount) {
       return res.status(400).json({
         success: false,
-        message: "Sare fields zaroori hain",
+        message: "Sare fields aur kam se kam 1 item zaroori hai",
       });
     }
 
@@ -34,6 +36,7 @@ const createOrder = async (req, res) => {
   }
 };
 
+// GET /api/orders
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -49,6 +52,7 @@ const getOrders = async (req, res) => {
   }
 };
 
+// GET /api/orders/my-orders?email=user@example.com
 const getMyOrders = async (req, res) => {
   try {
     const { email } = req.query;
@@ -74,9 +78,19 @@ const getMyOrders = async (req, res) => {
   }
 };
 
+// PUT /api/orders/:id/status
 const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
+    const allowedStatuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
+
+    if (!status || !allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid status required (pending, processing, shipped, delivered, cancelled)",
+      });
+    }
+
     const order = await Order.findByIdAndUpdate(
       req.params.id,
       { status },
@@ -103,6 +117,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+// DELETE /api/orders/:id
 const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);

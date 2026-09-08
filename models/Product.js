@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      required: true, // e.g. "Kurti", "Abaya", "Shalwar Kameez"
+      required: true, // e.g. "Rings", "Necklaces", "Earrings", "Bracelets"
     },
     image: {
       type: String,
